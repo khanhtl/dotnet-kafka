@@ -1,6 +1,12 @@
-﻿namespace Post.Cmd.Api.Events
+﻿using CQRS.Core.Events;
+
+namespace Post.Cmd.Api.Events
 {
-    public class PostRemovedEvent
+    public class PostRemovedEvent : BaseEvent
     {
+        public PostRemovedEvent() : base(nameof(CommentRemovedEvent))
+        {
+            
+        }
     }
 }
