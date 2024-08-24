@@ -1,4 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using Post.Query.Infrastructure.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+Action<DbContextOptionsBuilder> configureDbContext = (o => o.UseLazyLoadingProxies().UseMySQL(builder.Configuration.GetConnectionString("MysqlServer")));
+builder.Services.AddDbContext<DatabaseContext>(configureDbContext);
+builder.Services.AddSingleton<DatabaseContextFactory>(new DatabaseContextFactory(configureDbContext));
+
+
+var dataContext = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
+dataContext.Database.EnsureCreated();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
