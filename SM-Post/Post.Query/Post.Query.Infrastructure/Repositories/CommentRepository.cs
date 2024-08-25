@@ -5,7 +5,7 @@ using Post.Query.Infrastructure.Data;
 
 namespace Post.Query.Infrastructure.Repositories;
 
-internal class CommentRepository : ICommentRepository
+public class CommentRepository : ICommentRepository
 {
     private readonly DatabaseContextFactory _contextFactory;
 
