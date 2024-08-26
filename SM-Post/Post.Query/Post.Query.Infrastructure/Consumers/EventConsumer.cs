@@ -16,6 +16,7 @@ namespace Post.Query.Infrastructure.Consumers
         public EventConsumer(IOptions<ConsumerConfig> config, IEventHandler eventHandler)
         {
             _config = config.Value;
+            _config.AllowAutoCreateTopics = true;
             _eventHandler = eventHandler;
         }
         public void Comsume(string topic)

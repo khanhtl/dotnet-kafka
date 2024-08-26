@@ -8,7 +8,7 @@ using Post.Query.Infrastructure.Data;
 using Post.Query.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-Action<DbContextOptionsBuilder> configureDbContext = (o => o.UseLazyLoadingProxies().UseMySQL(builder.Configuration.GetConnectionString("MysqlServer")));
+Action<DbContextOptionsBuilder> configureDbContext = (o => o.UseMySQL(builder.Configuration.GetConnectionString("MysqlServer")));
 builder.Services.AddDbContext<DatabaseContext>(configureDbContext);
 builder.Services.AddSingleton(new DatabaseContextFactory(configureDbContext));
 

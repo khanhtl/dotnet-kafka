@@ -17,7 +17,7 @@ namespace Post.Cmd.Infrastructure.Handlers
         {
             var aggregate = new PostAggregate();
             var events = await _eventStore.GetEventsAsync(aggregateId);
-            if(events == null || events.Any())
+            if(events == null || !events.Any())
             {
                 return aggregate;
             }

@@ -37,28 +37,28 @@ namespace Post.Query.Infrastructure.Repositories
             return await context.Posts.Include(p => p.Commments).AsNoTracking().ToListAsync();
         }
 
-        public Task<List<PostEntity>> GetByAuthorAsync(string author)
+        public async Task<List<PostEntity>> GetByAuthorAsync(string author)
         {
             using DatabaseContext context = _contextFactory.CreateDbContext();
-            return context.Posts.Include(p => p.Commments).AsNoTracking().Where(p => p.Author.Contains(author)).ToListAsync();
+            return await context.Posts.Include(p => p.Commments).AsNoTracking().Where(p => p.Author.Contains(author)).ToListAsync();
         }
 
-        public Task<PostEntity> GetByIdAsync(Guid postId)
+        public async Task<PostEntity> GetByIdAsync(Guid postId)
         {
             using DatabaseContext context = _contextFactory.CreateDbContext();
-            return context.Posts.Include(p => p.Commments).FirstOrDefaultAsync(p => p.PostId == postId);
+            return await context.Posts.Include(p => p.Commments).FirstOrDefaultAsync(p => p.PostId == postId);
         }
 
-        public Task<List<PostEntity>> GetWithCommentsAsync()
+        public async Task<List<PostEntity>> GetWithCommentsAsync()
         {
             using DatabaseContext context = _contextFactory.CreateDbContext();
-            return context.Posts.AsNoTracking().Include(p => p.Commments).Where(x => x.Commments != null && x.Commments.Any()).ToListAsync();
+            return await context.Posts.AsNoTracking().Include(p => p.Commments).Where(x => x.Commments != null && x.Commments.Any()).ToListAsync();
         }
 
-        public Task<List<PostEntity>> GetWithLikesAsync(int numberOfLike)
+        public async Task<List<PostEntity>> GetWithLikesAsync(int numberOfLike)
         {
             using DatabaseContext context = _contextFactory.CreateDbContext();
-            return context.Posts.AsNoTracking().Include(p => p.Commments).Where(x => x.Likes >= numberOfLike).ToListAsync();
+            return await context.Posts.AsNoTracking().Include(p => p.Commments).Where(x => x.Likes >= numberOfLike).ToListAsync();
         }
 
         public async Task UpdateAsync(PostEntity post)
