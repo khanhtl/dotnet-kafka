@@ -4,7 +4,7 @@ namespace Post.Common.Events;
 
 public class PostLikedEvent : BaseEvent
 {
-    public PostLikedEvent() : base(nameof(PostCreatedEvent))
+    public PostLikedEvent() : base(nameof(PostLikedEvent))
     {
         
     }

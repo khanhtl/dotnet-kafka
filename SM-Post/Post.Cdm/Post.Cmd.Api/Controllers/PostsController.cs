@@ -30,9 +30,8 @@ namespace Post.Cmd.Api.Controllers
                 command.Id = id;
                 await _commandDispatcher.SendAsync(command);
 
-                return StatusCode(StatusCodes.Status201Created, new PostResponse
+                return StatusCode(StatusCodes.Status201Created, new BaseResponse
                 {
-                    Id = id,
                     Message = "New post creation request completed successfully!"
                 });
             }
@@ -64,10 +63,9 @@ namespace Post.Cmd.Api.Controllers
                 command.Id = id;
                 await _commandDispatcher.SendAsync(command);
 
-                return StatusCode(StatusCodes.Status200OK, new PostResponse
+                return StatusCode(StatusCodes.Status200OK, new BaseResponse
                 {
-                    Id = id,
-                    Message = "Edit message completed successfully!"
+                    Message = "Edit message request completed successfully!"
                 });
             }
             catch (InvalidOperationException ex)
@@ -80,7 +78,7 @@ namespace Post.Cmd.Api.Controllers
             }
             catch (AggregateNotFoundException ex)
             {
-                _logger.Log(LogLevel.Warning, ex, "Could not retrive aggregate, client passed an incorrect Id targeting the aggregate!");
+                _logger.Log(LogLevel.Warning, ex, "Could not retreive aggregate, client passed an incorrect Id targeting the aggregate!");
                 return BadRequest(new BaseResponse
                 {
                     Message = ex.Message,
@@ -89,6 +87,45 @@ namespace Post.Cmd.Api.Controllers
             catch (Exception ex)
             {
                 const string SAFE_ERROR_MESSAGE = "Error while processing request to edit message of a post";
+                _logger.Log(LogLevel.Error, ex, SAFE_ERROR_MESSAGE);
+                return StatusCode(StatusCodes.Status500InternalServerError, new PostResponse
+                {
+                    Id = id,
+                    Message = SAFE_ERROR_MESSAGE,
+                });
+            }
+        }
+        [HttpPut("{id}/like")]
+        public async Task<ActionResult>LikedPostAsync(Guid id)
+        {
+            try
+            {
+                await _commandDispatcher.SendAsync(new LikePostCommand { Id = id});
+
+                return StatusCode(StatusCodes.Status200OK, new BaseResponse
+                {
+                    Message = "Like post request completed successfully!"
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Log(LogLevel.Warning, ex, "Client made a bad request");
+                return BadRequest(new BaseResponse
+                {
+                    Message = ex.Message,
+                });
+            }
+            catch (AggregateNotFoundException ex)
+            {
+                _logger.Log(LogLevel.Warning, ex, "Could not retreive aggregate, client passed an incorrect Id targeting the aggregate!");
+                return BadRequest(new BaseResponse
+                {
+                    Message = ex.Message,
+                });
+            }
+            catch (Exception ex)
+            {
+                const string SAFE_ERROR_MESSAGE = "Error while processing request to to like a post";
                 _logger.Log(LogLevel.Error, ex, SAFE_ERROR_MESSAGE);
                 return StatusCode(StatusCodes.Status500InternalServerError, new PostResponse
                 {
