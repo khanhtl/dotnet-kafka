@@ -97,6 +97,7 @@ public class PostAggregate : AggregateRoot
         {
             Id = _id,
             Comment = comment,
+            CommentId = Guid.NewGuid(),
             UserName = userName,
             CommentDate = DateTime.Now,
         });
