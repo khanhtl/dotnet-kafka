@@ -42,7 +42,7 @@ namespace Post.Cmd.Api.Commands
         public async Task HandleAsync(EditCommentCommand command)
         {
             var aggregate = await _eventSourcingHandler.GetByIdAsync(command.Id);
-            aggregate.EditComment(command.CommentID, command.Comment, command.UserName);
+            aggregate.EditComment(command.CommentId, command.Comment, command.UserName);
             await _eventSourcingHandler.SaveAsync(aggregate);
         }
 
