@@ -49,7 +49,7 @@ namespace Post.Cmd.Api.Commands
         public async Task HandleAsync(RemoveCommentCommand command)
         {
             var aggregate = await _eventSourcingHandler.GetByIdAsync(command.Id);
-            aggregate.RemoveComment(command.CommentID, command.UserName);
+            aggregate.RemoveComment(command.CommentId, command.UserName);
             await _eventSourcingHandler.SaveAsync(aggregate);
         }
 

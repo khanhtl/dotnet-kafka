@@ -99,4 +99,44 @@ public class CommentsController : ControllerBase
             });
         }
     }
+    [HttpDelete("{commentId}")]
+    public async Task<ActionResult> RemoveCommentAsync(Guid postId, Guid commentId, RemoveCommentCommand command)
+    {
+        try
+        {
+            command.Id = postId;
+            command.CommentId = commentId;
+            await _commandDispatcher.SendAsync(command);
+            return Ok(new BaseResponse
+            {
+                Message = "Remove comment request completed successfully!"
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.Log(LogLevel.Warning, ex, "Client made a bad request");
+            return BadRequest(new BaseResponse
+            {
+                Message = ex.Message,
+            });
+        }
+        catch (AggregateNotFoundException ex)
+        {
+            _logger.Log(LogLevel.Warning, ex, "Could not retreive aggregate, client passed an incorrect Id targeting the aggregate!");
+            return BadRequest(new BaseResponse
+            {
+                Message = ex.Message,
+            });
+        }
+        catch (Exception ex)
+        {
+            const string SAFE_ERROR_MESSAGE = "Error while processing request to remove comment to a post";
+            _logger.Log(LogLevel.Error, ex, SAFE_ERROR_MESSAGE);
+            return StatusCode(StatusCodes.Status500InternalServerError, new PostResponse
+            {
+                Id = postId,
+                Message = SAFE_ERROR_MESSAGE,
+            });
+        }
+    }
 }

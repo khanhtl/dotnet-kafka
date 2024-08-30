@@ -125,7 +125,48 @@ namespace Post.Cmd.Api.Controllers
             }
             catch (Exception ex)
             {
-                const string SAFE_ERROR_MESSAGE = "Error while processing request to to like a post";
+                const string SAFE_ERROR_MESSAGE = "Error while processing request to like a post";
+                _logger.Log(LogLevel.Error, ex, SAFE_ERROR_MESSAGE);
+                return StatusCode(StatusCodes.Status500InternalServerError, new PostResponse
+                {
+                    Id = id,
+                    Message = SAFE_ERROR_MESSAGE,
+                });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> RemovePostAsync(Guid id, RemovePostCommand command)
+        {
+            try
+            {
+                command.Id = id;
+                await _commandDispatcher.SendAsync(command);
+
+                return StatusCode(StatusCodes.Status200OK, new BaseResponse
+                {
+                    Message = "Remove post request completed successfully!"
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Log(LogLevel.Warning, ex, "Client made a bad request");
+                return BadRequest(new BaseResponse
+                {
+                    Message = ex.Message,
+                });
+            }
+            catch (AggregateNotFoundException ex)
+            {
+                _logger.Log(LogLevel.Warning, ex, "Could not retreive aggregate, client passed an incorrect Id targeting the aggregate!");
+                return BadRequest(new BaseResponse
+                {
+                    Message = ex.Message,
+                });
+            }
+            catch (Exception ex)
+            {
+                const string SAFE_ERROR_MESSAGE = "Error while processing request to remove a post";
                 _logger.Log(LogLevel.Error, ex, SAFE_ERROR_MESSAGE);
                 return StatusCode(StatusCodes.Status500InternalServerError, new PostResponse
                 {
